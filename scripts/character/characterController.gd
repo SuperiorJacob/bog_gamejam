@@ -8,8 +8,9 @@ var direction: Vector3
 var targetInRange = false
 var attacking = false
 
-var health = 1;
-var dashes = 1;
+var health = 1
+var dashes = 1
+var dashing = false
 
 func _ready():
 	add_to_group("possessable")
@@ -58,6 +59,8 @@ func reset():
 	attacking = false
 
 func takeDamage(amount: int):
+	if (dashing): return
+
 	print("TAKE DAMAGE <", self, "> Health: ", health, "Damage:", amount)
 
 	health -= amount
@@ -72,17 +75,29 @@ func attack():
 
 	attacking = true
 	onAttack()
-	await get_tree().create_timer(characterResource.attackCooldown).timeout
+	await Global.createTimer(characterResource.attackCooldown)
 	attacking = false
 	onAttackEnd()
 
 func dash():
+	if (dashing): return
+
+	dashing = true
 	dashParticles.restart()
+
+	collision_layer = 2
+	collision_mask = 2
 
 	velocity.x = direction.x * characterResource.dashStrength;
 	velocity.z = direction.z * characterResource.dashStrength;
 
 	move_and_slide();
+
+	await Global.createTimer(0.15)
+
+	collision_layer = 1
+	collision_mask = 1
+	dashing = false
 
 func onPossessionChanged():
 	triggerArea.onPossessionChanged(isPossessed)
@@ -91,7 +106,7 @@ func onPossessionChanged():
 		reset()
 
 func death():
-	print("DEATH", self, health, characterResource.health)
+	print("DEATH ", self, " ", health, "/", characterResource.health)
 
 	if (isPossessed):
 		return #do something

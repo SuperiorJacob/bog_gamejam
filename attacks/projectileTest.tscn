@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://bu2ii1w7keoea"]
+
+[ext_resource type="Script" path="res://scripts/attacks/projectile.gd" id="1_amuse"]
+[ext_resource type="Texture2D" uid="uid://clvsea2oyuju5" path="res://addons/kenney_prototype_textures/purple/texture_10.png" id="2_hihkd"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yeisy"]
+radius = 0.1
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ataw"]
+albedo_texture = ExtResource("2_hihkd")
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_og4k5"]
+material = SubResource("StandardMaterial3D_1ataw")
+radius = 0.1
+height = 0.5
+radial_segments = 32
+rings = 4
+
+[node name="ProjectileTest" type="Node3D" node_paths=PackedStringArray("rb")]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+script = ExtResource("1_amuse")
+rb = NodePath("RigidBody3D")
+projectileStrength = 10
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+collision_layer = 8
+collision_mask = 8
+axis_lock_linear_y = true
+axis_lock_angular_z = true
+gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("CapsuleShape3D_yeisy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
+mesh = SubResource("CapsuleMesh_og4k5")

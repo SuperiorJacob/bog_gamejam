@@ -2,7 +2,8 @@ class_name CharacterResource extends Resource
 
 @export_group("Basic")
 @export var health: int = 1
-@export var moveSpeed: int = 5;
+@export var moveSpeed: int = 10;
+@export var moveFriction: int = 1;
 @export var dashCount: int = 1
 @export var dashStrength: int = 500
 
