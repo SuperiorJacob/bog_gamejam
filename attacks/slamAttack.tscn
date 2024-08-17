@@ -1,0 +1,46 @@
+[gd_scene load_steps=9 format=3 uid="uid://4v1tli2xemcp"]
+
+[ext_resource type="Script" path="res://scripts/attacks/slamAttack.gd" id="1_7sl4j"]
+
+[sub_resource type="Gradient" id="Gradient_xgqas"]
+offsets = PackedFloat32Array(0, 0.4, 0.781818, 1)
+colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 0.137255, 1, 0, 0, 0.137255, 1, 0, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_u3f23"]
+gradient = SubResource("Gradient_xgqas")
+
+[sub_resource type="Curve" id="Curve_kwsvd"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_epl16"]
+curve = SubResource("Curve_kwsvd")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jol0j"]
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_epl16")
+color_ramp = SubResource("GradientTexture1D_u3f23")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vb7jl"]
+transparency = 1
+vertex_color_use_as_albedo = true
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_vys0w"]
+material = SubResource("StandardMaterial3D_vb7jl")
+top_radius = 0.0
+bottom_radius = 1.0
+height = 0.01
+radial_segments = 32
+
+[node name="Slam Attack" type="Node3D" node_paths=PackedStringArray("particle")]
+script = ExtResource("1_7sl4j")
+particle = NodePath("GPUParticles3D")
+attackRange = 4
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 1
+lifetime = 2.5
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_jol0j")
+draw_pass_1 = SubResource("CylinderMesh_vys0w")
