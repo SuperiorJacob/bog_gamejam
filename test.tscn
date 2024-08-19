@@ -1,17 +1,16 @@
-[gd_scene load_steps=27 format=3 uid="uid://bd74bxslpn3ce"]
+[gd_scene load_steps=16 format=3 uid="uid://bd74bxslpn3ce"]
 
 [ext_resource type="Texture2D" uid="uid://16a1a1iun4fx" path="res://addons/kenney_prototype_textures/dark/texture_08.png" id="1_2srmk"]
-[ext_resource type="Script" path="res://scripts/character/characterController.gd" id="2_2qn2l"]
 [ext_resource type="Texture2D" uid="uid://d31bbk34wm8at" path="res://addons/kenney_prototype_textures/dark/texture_10.png" id="2_lkg1s"]
 [ext_resource type="Script" path="res://scripts/character/playerController.gd" id="2_m1mcn"]
-[ext_resource type="Resource" uid="uid://danar3uopydaw" path="res://characters/default.tres" id="3_665hm"]
-[ext_resource type="Texture2D" uid="uid://cmpt6w4217ri7" path="res://addons/kenney_prototype_textures/orange/texture_01.png" id="3_ive4s"]
 [ext_resource type="Texture2D" uid="uid://bv0ig2mvc87d" path="res://addons/kenney_prototype_textures/light/texture_01.png" id="4_uls5e"]
+[ext_resource type="PackedScene" uid="uid://cg6ejtpj20pw7" path="res://characters/ranged_character.tscn" id="8_25g6j"]
+[ext_resource type="Material" uid="uid://cfk0kdjnlkxfs" path="res://art/material/pixelpass.tres" id="8_78440"]
 [ext_resource type="PackedScene" uid="uid://bouy0fbm5dc7o" path="res://characters/strength.tscn" id="9_gfmgc"]
-[ext_resource type="Script" path="res://scripts/character/attackArea.gd" id="10_84bsw"]
 [ext_resource type="PackedScene" uid="uid://cggqb75a8w8r" path="res://addons/debug_menu/debug_menu.tscn" id="11_hmuqm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5pt48"]
+next_pass = ExtResource("8_78440")
 albedo_texture = ExtResource("2_lkg1s")
 uv1_scale = Vector3(0.1, 0.1, 0.1)
 
@@ -30,6 +29,7 @@ size = Vector2(30, 30)
 size = Vector3(0.5, 3, 30)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5cjmk"]
+next_pass = ExtResource("8_78440")
 albedo_texture = ExtResource("4_uls5e")
 uv1_scale = Vector3(10, 1, 10)
 
@@ -37,42 +37,9 @@ uv1_scale = Vector3(10, 1, 10)
 material = SubResource("StandardMaterial3D_5cjmk")
 size = Vector3(0.5, 3, 30)
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_uu3sc"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xmdtt"]
-albedo_texture = ExtResource("3_ive4s")
-uv1_scale = Vector3(0.1, 0.1, 0.1)
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_wo453"]
-material = SubResource("StandardMaterial3D_xmdtt")
-
-[sub_resource type="Gradient" id="Gradient_7p80a"]
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_bejs0"]
-gradient = SubResource("Gradient_7p80a")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_t57pj"]
-emission_shape = 1
-emission_sphere_radius = 0.1
-scale_min = 0.5
-color = Color(0.393086, 0.393086, 0.393085, 1)
-color_ramp = SubResource("GradientTexture1D_bejs0")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r18ku"]
-vertex_color_use_as_albedo = true
-
-[sub_resource type="QuadMesh" id="QuadMesh_ml7jm"]
-lightmap_size_hint = Vector2i(7, 7)
-material = SubResource("StandardMaterial3D_r18ku")
-size = Vector2(0.5, 0.5)
-orientation = 1
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_yj806"]
-radius = 1.0
-
 [node name="Game" type="Node3D" node_paths=PackedStringArray("possessed")]
 script = ExtResource("2_m1mcn")
-possessed = NodePath("Default Test")
+possessed = NodePath("Strength Character3")
 possessedMaterial = SubResource("StandardMaterial3D_5pt48")
 
 [node name="World" type="Node3D" parent="."]
@@ -136,39 +103,9 @@ current = true
 size = 30.0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.849865, 0.527, 0, -0.527, 0.849865, 0, 14.6886, 0)
-
-[node name="Default Test" type="CharacterBody3D" parent="." node_paths=PackedStringArray("triggerArea", "dashParticles", "meshNode")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 13)
-script = ExtResource("2_2qn2l")
-characterResource = ExtResource("3_665hm")
-triggerArea = NodePath("Attack Area")
-dashParticles = NodePath("MeshInstance3D/Dash Particle")
-meshNode = NodePath("MeshInstance3D")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Default Test"]
-shape = SubResource("CapsuleShape3D_uu3sc")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Default Test"]
-mesh = SubResource("CapsuleMesh_wo453")
-
-[node name="Dash Particle" type="GPUParticles3D" parent="Default Test/MeshInstance3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.568936)
-emitting = false
-amount = 10
-lifetime = 0.3
-one_shot = true
-process_material = SubResource("ParticleProcessMaterial_t57pj")
-draw_pass_1 = SubResource("QuadMesh_ml7jm")
-
-[node name="Attack Area" type="Area3D" parent="Default Test" node_paths=PackedStringArray("collider")]
-collision_layer = 2
-collision_mask = 2
-script = ExtResource("10_84bsw")
-collider = NodePath("Collider")
-
-[node name="Collider" type="CollisionShape3D" parent="Default Test/Attack Area"]
-shape = SubResource("CylinderShape3D_yj806")
+transform = Transform3D(1, 0, 0, 0, 0.602498, 0.79812, 0, -0.79812, 0.602498, 0, 14.6886, 0)
+shadow_enabled = true
+shadow_opacity = 0.85
 
 [node name="Strength Character" parent="." instance=ExtResource("9_gfmgc")]
 
@@ -179,3 +116,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.1367, 1, 1.93004)
 
 [node name="Strength Character3" parent="." instance=ExtResource("9_gfmgc")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.66654, 1, 1.06522)
+
+[node name="Ranged Character" parent="." instance=ExtResource("8_25g6j")]

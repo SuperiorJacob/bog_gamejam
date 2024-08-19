@@ -5,11 +5,11 @@
 
 [resource]
 script = ExtResource("1_v4kup")
-health = 10
+health = 1
 moveSpeed = 4
 moveFriction = 1
 dashCount = 1
 dashStrength = 500
-attackRange = 500
-attackCooldown = 0.1
+attackRange = 10.0
+attackCooldown = 0.5
 attack = ExtResource("1_ndrnj")

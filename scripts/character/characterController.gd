@@ -17,6 +17,7 @@ func _ready():
 
 	triggerArea.area_entered.connect(onAreaEntered)
 	triggerArea.area_exited.connect(onAreaExited)
+	triggerArea.setupArea(characterResource.attackRange)
 
 	reset()
 
@@ -31,7 +32,7 @@ func calculateDirection():
 		direction = position.direction_to(pos);
 
 func _physics_process(delta: float):
-	if (attacking || health == 0): return
+	if (!isPossessed && attacking|| health == 0): return
 
 	calculateDirection()
 
@@ -43,7 +44,7 @@ func _physics_process(delta: float):
 	move_and_slide();
 
 func _process(_delta: float):
-	if (!targetInRange || attacking || health == 0): return
+	if (isPossessed || !targetInRange || attacking || health == 0): return
 
 	await attack()
 
@@ -115,6 +116,12 @@ func death():
 	#dissolve shader?
 	#await get_tree().create_timer(1).timeout
 	queue_free()
+
+func knockback(dir: Vector3, amount: float):
+	velocity.x = dir.x * amount
+	velocity.z = dir.z * amount
+
+	move_and_slide();
 
 func onAreaEntered(area: AttackArea):
 	if (isPossessed || !area.targetable): return

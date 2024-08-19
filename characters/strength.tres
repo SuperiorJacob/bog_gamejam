@@ -5,10 +5,11 @@
 
 [resource]
 script = ExtResource("1_0hour")
-health = 3
+health = 2
 moveSpeed = 3
+moveFriction = 1
 dashCount = 1
 dashStrength = 500
-attackRange = 100
+attackRange = 1.0
 attackCooldown = 1.5
 attack = ExtResource("1_hwuay")

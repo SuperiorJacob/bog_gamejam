@@ -1,0 +1,12 @@
+[gd_resource type="CapsuleMesh" load_steps=4 format=3 uid="uid://d1hqxrsjg1qdi"]
+
+[ext_resource type="Texture2D" uid="uid://cmpt6w4217ri7" path="res://addons/kenney_prototype_textures/orange/texture_01.png" id="1_qj28t"]
+[ext_resource type="Material" uid="uid://cfk0kdjnlkxfs" path="res://art/material/pixelpass.tres" id="2_cmw1e"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xmdtt"]
+next_pass = ExtResource("2_cmw1e")
+albedo_texture = ExtResource("1_qj28t")
+uv1_scale = Vector3(0.1, 0.1, 0.1)
+
+[resource]
+material = SubResource("StandardMaterial3D_xmdtt")

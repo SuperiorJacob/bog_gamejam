@@ -13,7 +13,7 @@ func _ready():
 func createTimer(time):
 	return get_tree().create_timer(time).timeout
 
-func simpleRaycast(origin: Vector3, end: Vector3, exclude: Array[Node3D]):
+func simpleRaycast(origin: Vector3, end: Vector3, exclude: Array[RID]):
 	var space_state = world.direct_space_state
 	var query = PhysicsRayQueryParameters3D.create(origin, end)
 	query.exclude = exclude

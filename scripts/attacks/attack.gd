@@ -12,6 +12,20 @@ enum DamageTarget {
 
 var character: CharacterController
 var destroyed = false
+var damageTarget: int = enemyTargets
+
+var bitPossessed = false
+var bitEnemies = false
+var bitNotSelf = false
+var isPossessed = false
+
+func _ready():
+	isPossessed = character.isPossessed
+	if (isPossessed): damageTarget = possessedTargets
+
+	bitPossessed = Global.bitAnyOf(damageTarget, DamageTarget.POSSESSED)
+	bitEnemies = Global.bitAnyOf(damageTarget, DamageTarget.ENEMIES)
+	bitNotSelf = Global.bitAnyOf(damageTarget, DamageTarget.NOT_SELF)
 
 func destroy():
 	destroyed = true
@@ -20,32 +34,29 @@ func destroy():
 func doAttack():
 	pass
 
-func doDamage(_character: CharacterController, _amount: int):
-	pass
+func shouldDamage(o: Object):
+	if (!o.is_in_group("possessable")):
+		return false
+
+	var target = (o as CharacterController)
+	return (bitNotSelf if (target != character) else !bitNotSelf) && (bitPossessed && bitEnemies || bitPossessed && target.isPossessed || bitEnemies && !target.isPossessed)
+
+func doDamage(c: CharacterController, amount: int):
+	c.takeDamage(amount)
 
 func doDamageArc(_amount: int, _arc: int):
 	pass
 
 func doDamageRadius(amount: int, radius: float):
-	var damageTarget: int = enemyTargets
-	if (character.isPossessed): damageTarget = possessedTargets
-
-	var bitPossessed = Global.bitAnyOf(damageTarget, DamageTarget.POSSESSED)
-	var bitEnemies = Global.bitAnyOf(damageTarget, DamageTarget.ENEMIES)
-	var bitNotSelf = Global.bitAnyOf(damageTarget, DamageTarget.NOT_SELF)
-
-	if (!character.isPossessed && bitPossessed && !bitEnemies):
+	if (!isPossessed && bitPossessed && !bitEnemies):
 		var possessed = (Global.controller.possessed as CharacterController)
 
 		if (global_position.distance_to(possessed.global_position) <= radius):
-			possessed.takeDamage(amount);
+			doDamage(possessed, amount)
 
 		return
 
-	# Wtf is this please
 	var characters = get_tree().get_nodes_in_group("possessable")
 	for c in characters:
-		if (global_position.distance_to(c.global_position) <= radius):
-			if (bitNotSelf if (c != character) else !bitNotSelf):
-				if (bitPossessed && bitEnemies || bitPossessed && c.isPossessed || bitEnemies && !c.isPossessed):
-					(c as CharacterController).takeDamage(amount)
+		if (global_position.distance_to(c.global_position) <= radius && shouldDamage(c)):
+			doDamage(c, amount)

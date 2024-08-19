@@ -9,7 +9,7 @@ class_name CharacterResource extends Resource
 
 @export_group("Attack")
 ## How far away do we have to be before we attack a player
-@export var attackRange: int = 3
+@export var attackRange: float = 3
 ## How long before we can resume actions again
 @export var attackCooldown: float = 0.5
 ## Attack system

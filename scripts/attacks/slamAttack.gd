@@ -5,6 +5,7 @@ extends Attack
 @export var slamTime = 0.5
 
 func _ready():
+	super._ready()
 	(particle.draw_pass_1 as CylinderMesh).bottom_radius = attackRadius
 
 	particle.finished.connect(animationFinish)
