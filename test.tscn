@@ -1,12 +1,14 @@
-[gd_scene load_steps=16 format=3 uid="uid://bd74bxslpn3ce"]
+[gd_scene load_steps=18 format=3 uid="uid://bd74bxslpn3ce"]
 
 [ext_resource type="Texture2D" uid="uid://16a1a1iun4fx" path="res://addons/kenney_prototype_textures/dark/texture_08.png" id="1_2srmk"]
 [ext_resource type="Texture2D" uid="uid://d31bbk34wm8at" path="res://addons/kenney_prototype_textures/dark/texture_10.png" id="2_lkg1s"]
-[ext_resource type="Script" path="res://scripts/character/playerController.gd" id="2_m1mcn"]
+[ext_resource type="Script" path="res://scripts/character/player_controller.gd" id="2_m1mcn"]
+[ext_resource type="PackedScene" uid="uid://d30mv6781g47q" path="res://attacks/projectile_possessor.tscn" id="4_u4bli"]
 [ext_resource type="Texture2D" uid="uid://bv0ig2mvc87d" path="res://addons/kenney_prototype_textures/light/texture_01.png" id="4_uls5e"]
+[ext_resource type="PackedScene" uid="uid://db6cui8xc6nwa" path="res://characters/demon_character.tscn" id="5_vdbfj"]
 [ext_resource type="PackedScene" uid="uid://cg6ejtpj20pw7" path="res://characters/ranged_character.tscn" id="8_25g6j"]
 [ext_resource type="Material" uid="uid://cfk0kdjnlkxfs" path="res://art/material/pixelpass.tres" id="8_78440"]
-[ext_resource type="PackedScene" uid="uid://bouy0fbm5dc7o" path="res://characters/strength.tscn" id="9_gfmgc"]
+[ext_resource type="PackedScene" uid="uid://bouy0fbm5dc7o" path="res://characters/strength_character.tscn" id="9_gfmgc"]
 [ext_resource type="PackedScene" uid="uid://cggqb75a8w8r" path="res://addons/debug_menu/debug_menu.tscn" id="11_hmuqm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5pt48"]
@@ -40,6 +42,8 @@ size = Vector3(0.5, 3, 30)
 script = ExtResource("2_m1mcn")
 possessed = NodePath("Ranged Character")
 possessedMaterial = SubResource("StandardMaterial3D_5pt48")
+possessorBullet = ExtResource("4_u4bli")
+demon = ExtResource("5_vdbfj")
 
 [node name="World" type="Node3D" parent="."]
 
@@ -106,8 +110,21 @@ transform = Transform3D(1, 0, 0, 0, 0.602498, 0.79812, 0, -0.79812, 0.602498, 0,
 shadow_enabled = true
 shadow_opacity = 0.85
 
-[node name="Strength Character" parent="." instance=ExtResource("9_gfmgc")]
-
 [node name="CanvasLayer" parent="." instance=ExtResource("11_hmuqm")]
 
 [node name="Ranged Character" parent="." instance=ExtResource("8_25g6j")]
+
+[node name="Strength Test" parent="." instance=ExtResource("9_gfmgc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2096, 0.999999, -11.878)
+
+[node name="Strength Test2" parent="." instance=ExtResource("9_gfmgc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.7453, 0.999999, -11.8606)
+
+[node name="Ranged Character2" parent="." instance=ExtResource("8_25g6j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -11.0537)
+
+[node name="Ranged Character3" parent="." instance=ExtResource("8_25g6j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.76555, 1, -11.0537)
+
+[node name="Ranged Character4" parent="." instance=ExtResource("8_25g6j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.78436, 1, -11.0537)

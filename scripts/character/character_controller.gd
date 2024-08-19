@@ -10,6 +10,8 @@ var targetInRange = false
 var attacking = false
 
 var health = 1
+var dead = false
+
 var dashes = 1
 var dashing = false
 
@@ -24,7 +26,7 @@ func _ready():
 
 func calculateDirection():
 	if (isPossessed):
-		var input = Global.controller.input_dir;
+		var input = Global.controller.inputDir;
 		direction = (transform.basis * Vector3(input.x, 0, input.y)).normalized();
 	else:
 		if (!Global.controller.possessed): return
@@ -33,7 +35,9 @@ func calculateDirection():
 		direction = position.direction_to(pos);
 
 func _physics_process(delta: float):
-	if (!isPossessed && attacking|| health == 0): return
+	super._physics_process(delta)
+
+	if (!isPossessed && attacking|| dead): return
 
 	calculateDirection()
 
@@ -45,7 +49,7 @@ func _physics_process(delta: float):
 	move_and_slide();
 
 func _process(_delta: float):
-	if (isPossessed || !targetInRange || attacking || health == 0): return
+	if (dead || isPossessed || !targetInRange || attacking): return
 
 	await attack()
 
@@ -69,10 +73,11 @@ func takeDamage(amount: int):
 
 	if (health < 1):
 		health = 0
+		dead = true
 		death()
 
 func attack():
-	if (attacking || health == 0): return
+	if (attacking || dead): return
 	calculateDirection()
 
 	attacking = true
@@ -90,7 +95,7 @@ func changeMask(mask: int):
 	attackArea.collision_mask = mask
 
 func dash():
-	if (dashing): return
+	if (dashing || dead): return
 
 	dashing = true
 	dashParticles.restart()
@@ -124,12 +129,12 @@ func onPossessionChanged():
 func death():
 	print("DEATH ", self, " ", health, "/", characterResource.health)
 
-	if (isPossessed):
-		return #do something
-
 	health = 0;
 	#dissolve shader?
 	#await get_tree().create_timer(1).timeout
+	if (isPossessed):
+		Global.controller.playerDeath()
+
 	queue_free()
 
 func knockback(dir: Vector3, amount: float):
@@ -138,12 +143,16 @@ func knockback(dir: Vector3, amount: float):
 
 	move_and_slide();
 
+func checkOverlaps():
+	for area in attackArea.get_overlapping_areas():
+		onAreaEntered(area)
+
 func onAreaEntered(area: AttackArea):
 	if (isPossessed || !area.targetable || !area.isPossessed): return
 
 	targetInRange = true
 
 func onAreaExited(area: AttackArea):
-	if (isPossessed || !area.targetable): return
+	if (isPossessed || !area.targetable || !area.isPossessed): return
 
 	targetInRange = false

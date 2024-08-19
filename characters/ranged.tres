@@ -1,15 +1,15 @@
 [gd_resource type="Resource" script_class="CharacterResource" load_steps=3 format=3 uid="uid://danar3uopydaw"]
 
-[ext_resource type="PackedScene" uid="uid://bu2ii1w7keoea" path="res://attacks/projectileTest.tscn" id="1_ndrnj"]
-[ext_resource type="Script" path="res://scripts/resource/characterResource.gd" id="1_v4kup"]
+[ext_resource type="PackedScene" uid="uid://bu2ii1w7keoea" path="res://attacks/projectile_test.tscn" id="1_ndrnj"]
+[ext_resource type="Script" path="res://scripts/resource/character_resource.gd" id="1_v4kup"]
 
 [resource]
 script = ExtResource("1_v4kup")
 health = 1
-moveSpeed = 4
+moveSpeed = 5
 moveFriction = 1
 dashCount = 1
-dashStrength = 500
-attackRange = 10.0
+dashStrength = 800
+attackRange = 20.0
 attackCooldown = 0.5
 attack = ExtResource("1_ndrnj")

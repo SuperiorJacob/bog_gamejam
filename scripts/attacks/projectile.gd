@@ -14,8 +14,11 @@ func _ready():
 	super._ready()
 	rb.body_entered.connect(onCollide)
 
+func shouldRicochetFinish():
+	return (ricochetCount >= ricochetAmount)
+
 func doRicochet(normal: Vector3):
-	if (ricochetCount >= ricochetAmount): return finish()
+	if (shouldRicochetFinish()): return finish()
 	ricochetCount += 1
 
 	rb.angular_velocity = Vector3.ZERO
@@ -32,12 +35,17 @@ func faceAndMove():
 
 	rb.apply_central_impulse(direction * projectileStrength)
 
+func onProjectileHit(obj):
+	if (shouldDamage(obj)):
+		doDamage(obj, damage)
+		return true
+
+	return false
+
 func onCollide(obj):
 	var ray = Global.simpleRaycast(position, obj.position, [self])
 
-	if (shouldDamage(obj)):
-		#if (ray && projectileKnockback > 0): obj.knockback(-ray.normal, projectileKnockback)
-		doDamage(obj, damage)
+	if (onProjectileHit(obj)):
 		return finish()
 
 	if (ray && ricochet): doRicochet(ray.normal)
@@ -49,7 +57,7 @@ func finish():
 func _physics_process(_delta):
 	if (rb.linear_velocity.length() == 0): return
 
-	if (rb.linear_velocity.length() < 5): finish()
+	if (rb.linear_velocity.length() < projectileStrength/1.5): finish()
 
 func doAttack():
 	#character.meshNode.add_child(self)

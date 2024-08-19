@@ -1,6 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://4v1tli2xemcp"]
+[gd_scene load_steps=9 format=3 uid="uid://dpm5gyequj2of"]
 
-[ext_resource type="Script" path="res://scripts/attacks/slamAttack.gd" id="1_7sl4j"]
+[ext_resource type="Script" path="res://scripts/attacks/slam_attack.gd" id="1_wqtd1"]
 
 [sub_resource type="Gradient" id="Gradient_xgqas"]
 offsets = PackedFloat32Array(0, 0.4, 0.781818, 1)
@@ -33,7 +33,7 @@ height = 0.01
 radial_segments = 32
 
 [node name="Slam Attack" type="Node3D" node_paths=PackedStringArray("particle")]
-script = ExtResource("1_7sl4j")
+script = ExtResource("1_wqtd1")
 particle = NodePath("GPUParticles3D")
 attackRadius = 8.0
 enemyTargets = 5
