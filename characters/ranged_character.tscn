@@ -50,12 +50,15 @@ gravity = Vector3(0, 0, 0)
 scale_curve = SubResource("CurveTexture_d06te")
 color_ramp = SubResource("GradientTexture1D_dr4l8")
 
-[node name="Ranged Character" type="CharacterBody3D" node_paths=PackedStringArray("triggerArea", "dashParticles", "meshNode")]
+[node name="Ranged Character" type="CharacterBody3D" node_paths=PackedStringArray("dashParticles", "attackArea", "bodyArea", "meshNode")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 13)
+collision_layer = 2
+collision_mask = 7
 script = ExtResource("1_ybpf5")
 characterResource = ExtResource("2_k5is2")
-triggerArea = NodePath("Attack Area")
 dashParticles = NodePath("Dash2")
+attackArea = NodePath("Attack Area")
+bodyArea = NodePath("Body Area")
 meshNode = NodePath("MeshInstance3D")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -67,9 +70,10 @@ mesh = ExtResource("3_x3lgb")
 
 [node name="Attack Area" type="Area3D" parent="." node_paths=PackedStringArray("collider")]
 collision_layer = 2
-collision_mask = 2
+collision_mask = 6
 script = ExtResource("4_qu6xl")
 collider = NodePath("Collider")
+targetable = false
 
 [node name="Collider" type="CollisionShape3D" parent="Attack Area"]
 shape = SubResource("CylinderShape3D_3kc6t")
@@ -92,3 +96,12 @@ lifetime = 0.35
 one_shot = true
 process_material = SubResource("ParticleProcessMaterial_35nv2")
 draw_pass_1 = ExtResource("5_4elx6")
+
+[node name="Body Area" type="Area3D" parent="." node_paths=PackedStringArray("collider")]
+collision_layer = 2
+collision_mask = 6
+script = ExtResource("4_qu6xl")
+collider = NodePath("Collider")
+
+[node name="Collider" type="CollisionShape3D" parent="Body Area"]
+shape = SubResource("CylinderShape3D_3kc6t")

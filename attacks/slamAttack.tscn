@@ -36,7 +36,7 @@ radial_segments = 32
 script = ExtResource("1_7sl4j")
 particle = NodePath("GPUParticles3D")
 attackRadius = 8.0
-enemyTargets = 7
+enemyTargets = 5
 possessedTargets = 6
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]

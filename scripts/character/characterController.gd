@@ -1,8 +1,9 @@
 class_name CharacterController extends Possessable
 
 @export var characterResource: CharacterResource
-@export var triggerArea: AttackArea
 @export var dashParticles: GPUParticles3D
+@export var attackArea: AttackArea
+@export var bodyArea: AttackArea
 
 var direction: Vector3
 var targetInRange = false
@@ -15,9 +16,9 @@ var dashing = false
 func _ready():
 	add_to_group("possessable")
 
-	triggerArea.area_entered.connect(onAreaEntered)
-	triggerArea.area_exited.connect(onAreaExited)
-	triggerArea.setupArea(characterResource.attackRange)
+	attackArea.area_entered.connect(onAreaEntered)
+	attackArea.area_exited.connect(onAreaExited)
+	attackArea.setupArea(characterResource.attackRange)
 
 	reset()
 
@@ -80,14 +81,24 @@ func attack():
 	attacking = false
 	onAttackEnd()
 
+func changeLayer(layer: int):
+	collision_layer = layer
+	attackArea.collision_layer = layer
+
+func changeMask(mask: int):
+	collision_mask = mask
+	attackArea.collision_mask = mask
+
 func dash():
 	if (dashing): return
 
 	dashing = true
 	dashParticles.restart()
 
-	collision_layer = 2
-	collision_mask = 2
+	var prevLayer = collision_layer
+	var prevMask = collision_mask
+	changeLayer(16)
+	changeMask(17) # World & Dashing
 
 	velocity.x = direction.x * characterResource.dashStrength;
 	velocity.z = direction.z * characterResource.dashStrength;
@@ -96,15 +107,19 @@ func dash():
 
 	await Global.createTimer(0.15)
 
-	collision_layer = 1
-	collision_mask = 1
+	changeLayer(prevLayer)
+	changeMask(prevMask)
 	dashing = false
 
 func onPossessionChanged():
-	triggerArea.onPossessionChanged(isPossessed)
+	attackArea.onPossessionChanged(isPossessed)
+	bodyArea.onPossessionChanged(isPossessed)
 
 	if (isPossessed):
+		attackArea.collision_layer = 4
 		reset()
+	else:
+		attackArea.collision_layer = 2
 
 func death():
 	print("DEATH ", self, " ", health, "/", characterResource.health)
@@ -124,7 +139,7 @@ func knockback(dir: Vector3, amount: float):
 	move_and_slide();
 
 func onAreaEntered(area: AttackArea):
-	if (isPossessed || !area.targetable): return
+	if (isPossessed || !area.targetable || !area.isPossessed): return
 
 	targetInRange = true
 

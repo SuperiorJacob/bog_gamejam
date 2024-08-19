@@ -36,7 +36,7 @@ func onCollide(obj):
 	var ray = Global.simpleRaycast(position, obj.position, [self])
 
 	if (shouldDamage(obj)):
-		if (ray && projectileKnockback > 0): obj.knockback(-ray.normal, projectileKnockback)
+		#if (ray && projectileKnockback > 0): obj.knockback(-ray.normal, projectileKnockback)
 		doDamage(obj, damage)
 		return finish()
 

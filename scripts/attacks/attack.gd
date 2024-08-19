@@ -22,6 +22,7 @@ var isPossessed = false
 func _ready():
 	isPossessed = character.isPossessed
 	if (isPossessed): damageTarget = possessedTargets
+	else: damageTarget = enemyTargets
 
 	bitPossessed = Global.bitAnyOf(damageTarget, DamageTarget.POSSESSED)
 	bitEnemies = Global.bitAnyOf(damageTarget, DamageTarget.ENEMIES)
@@ -39,7 +40,9 @@ func shouldDamage(o: Object):
 		return false
 
 	var target = (o as CharacterController)
-	return (bitNotSelf if (target != character) else !bitNotSelf) && (bitPossessed && bitEnemies || bitPossessed && target.isPossessed || bitEnemies && !target.isPossessed)
+	if (bitNotSelf && target == character): return false
+
+	return (bitPossessed && bitEnemies || bitPossessed && target.isPossessed || bitEnemies && !target.isPossessed)
 
 func doDamage(c: CharacterController, amount: int):
 	c.takeDamage(amount)
