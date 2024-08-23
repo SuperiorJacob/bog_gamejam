@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3 uid="uid://bu2ii1w7keoea"]
+
+[ext_resource type="Script" path="res://scripts/attacks/projectile.gd" id="1_ej2tv"]
+[ext_resource type="Texture2D" uid="uid://clvsea2oyuju5" path="res://addons/kenney_prototype_textures/purple/texture_10.png" id="2_bbo2s"]
+[ext_resource type="Material" uid="uid://cfk0kdjnlkxfs" path="res://art/material/pixelpass.tres" id="3_vyj0m"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yeisy"]
+radius = 0.2
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ataw"]
+next_pass = ExtResource("3_vyj0m")
+albedo_texture = ExtResource("2_bbo2s")
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_og4k5"]
+material = SubResource("StandardMaterial3D_1ataw")
+radius = 0.2
+height = 1.0
+radial_segments = 32
+rings = 4
+
+[node name="ProjectileTest" type="Node3D" node_paths=PackedStringArray("rb")]
+script = ExtResource("1_ej2tv")
+rb = NodePath("RigidBody3D")
+ricochet = true
+ricochetAmount = 2
+projectileStrength = 15
+enemyTargets = 5
+possessedTargets = 6
+
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+transform = Transform3D(-4.37114e-08, 1, 4.37114e-08, 0, -4.37114e-08, 1, 1, 4.37114e-08, 1.91069e-15, 0, 0, 0)
+collision_layer = 8
+collision_mask = 7
+axis_lock_linear_y = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
+shape = SubResource("CapsuleShape3D_yeisy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
+mesh = SubResource("CapsuleMesh_og4k5")

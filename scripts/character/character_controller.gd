@@ -1,27 +1,32 @@
 class_name CharacterController extends Possessable
 
 @export var characterResource: CharacterResource
-@export var triggerArea: AttackArea
 @export var dashParticles: GPUParticles3D
+@export var attackArea: AttackArea
+@export var bodyArea: AttackArea
 
 var direction: Vector3
 var targetInRange = false
 var attacking = false
 
-var health = 1;
-var dashes = 1;
+var health = 1
+var dead = false
+
+var dashes = 1
+var dashing = false
 
 func _ready():
 	add_to_group("possessable")
 
-	triggerArea.area_entered.connect(onAreaEntered)
-	triggerArea.area_exited.connect(onAreaExited)
+	attackArea.area_entered.connect(onAreaEntered)
+	attackArea.area_exited.connect(onAreaExited)
+	attackArea.setupArea(characterResource.attackRange)
 
 	reset()
 
 func calculateDirection():
 	if (isPossessed):
-		var input = Global.controller.input_dir;
+		var input = Global.controller.inputDir;
 		direction = (transform.basis * Vector3(input.x, 0, input.y)).normalized();
 	else:
 		if (!Global.controller.possessed): return
@@ -30,7 +35,9 @@ func calculateDirection():
 		direction = position.direction_to(pos);
 
 func _physics_process(delta: float):
-	if (attacking || health == 0): return
+	super._physics_process(delta)
+
+	if (!isPossessed && attacking|| dead): return
 
 	calculateDirection()
 
@@ -42,7 +49,7 @@ func _physics_process(delta: float):
 	move_and_slide();
 
 func _process(_delta: float):
-	if (!targetInRange || attacking || health == 0): return
+	if (dead || isPossessed || !targetInRange || attacking): return
 
 	await attack()
 
@@ -58,55 +65,94 @@ func reset():
 	attacking = false
 
 func takeDamage(amount: int):
+	if (dashing): return
+
 	print("TAKE DAMAGE <", self, "> Health: ", health, "Damage:", amount)
 
 	health -= amount
 
 	if (health < 1):
 		health = 0
+		dead = true
 		death()
 
 func attack():
-	if (attacking || health == 0): return
+	if (attacking || dead): return
 	calculateDirection()
 
 	attacking = true
 	onAttack()
-	await get_tree().create_timer(characterResource.attackCooldown).timeout
+	await Global.createTimer(characterResource.attackCooldown)
 	attacking = false
 	onAttackEnd()
 
+func changeLayer(layer: int):
+	collision_layer = layer
+	attackArea.collision_layer = layer
+
+func changeMask(mask: int):
+	collision_mask = mask
+	attackArea.collision_mask = mask
+
 func dash():
+	if (dashing || dead): return
+
+	dashing = true
 	dashParticles.restart()
+
+	var prevLayer = collision_layer
+	var prevMask = collision_mask
+	changeLayer(16)
+	changeMask(17) # World & Dashing
 
 	velocity.x = direction.x * characterResource.dashStrength;
 	velocity.z = direction.z * characterResource.dashStrength;
 
 	move_and_slide();
 
+	await Global.createTimer(0.15)
+
+	changeLayer(prevLayer)
+	changeMask(prevMask)
+	dashing = false
+
 func onPossessionChanged():
-	triggerArea.onPossessionChanged(isPossessed)
+	attackArea.onPossessionChanged(isPossessed)
+	bodyArea.onPossessionChanged(isPossessed)
 
 	if (isPossessed):
+		attackArea.collision_layer = 4
 		reset()
+	else:
+		attackArea.collision_layer = 2
 
 func death():
-	print("DEATH", self, health, characterResource.health)
-
-	if (isPossessed):
-		return #do something
+	print("DEATH ", self, " ", health, "/", characterResource.health)
 
 	health = 0;
 	#dissolve shader?
 	#await get_tree().create_timer(1).timeout
+	if (isPossessed):
+		Global.controller.playerDeath()
+
 	queue_free()
 
+func knockback(dir: Vector3, amount: float):
+	velocity.x = dir.x * amount
+	velocity.z = dir.z * amount
+
+	move_and_slide();
+
+func checkOverlaps():
+	for area in attackArea.get_overlapping_areas():
+		onAreaEntered(area)
+
 func onAreaEntered(area: AttackArea):
-	if (isPossessed || !area.targetable): return
+	if (isPossessed || !area.targetable || !area.isPossessed): return
 
 	targetInRange = true
 
 func onAreaExited(area: AttackArea):
-	if (isPossessed || !area.targetable): return
+	if (isPossessed || !area.targetable || !area.isPossessed): return
 
 	targetInRange = false

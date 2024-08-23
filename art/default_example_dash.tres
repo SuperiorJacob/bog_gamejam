@@ -1,0 +1,8 @@
+[gd_resource type="CapsuleMesh" load_steps=2 format=3 uid="uid://xqwl103r5hh4"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_olyh4"]
+transparency = 1
+vertex_color_use_as_albedo = true
+
+[resource]
+material = SubResource("StandardMaterial3D_olyh4")

@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://cfk0kdjnlkxfs"]
+
+[ext_resource type="Shader" path="res://art/shader/matpixel.gdshader" id="2_1wtyy"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("2_1wtyy")
+shader_parameter/pixel_size = 2

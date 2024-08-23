@@ -1,11 +1,12 @@
 extends Attack
 
 @export var particle: GPUParticles3D
-@export var attackRange: int
+@export var attackRadius: float = 4
 @export var slamTime = 0.5
 
 func _ready():
-	(particle.draw_pass_1 as CylinderMesh).bottom_radius = attackRange
+	super._ready()
+	(particle.draw_pass_1 as CylinderMesh).bottom_radius = attackRadius
 
 	particle.finished.connect(animationFinish)
 
@@ -16,9 +17,9 @@ func _process(_delta):
 func doAttack():
 	character.meshNode.add_child(self)
 	particle.restart()
-	await get_tree().create_timer(slamTime).timeout
+	await Global.createTimer(slamTime)
 	if (destroyed): return
-	doDamageRadius(damage, attackRange)
+	doDamageRadius(damage, attackRadius/2)
 
 func animationFinish():
 	destroy()

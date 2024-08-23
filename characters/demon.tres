@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CharacterResource" load_steps=2 format=3 uid="uid://dmt07tgcrv1pl"]
+
+[ext_resource type="Script" path="res://scripts/resource/character_resource.gd" id="1_wh1q4"]
+
+[resource]
+script = ExtResource("1_wh1q4")
+health = 1
+moveSpeed = 7
+moveFriction = 1
+dashCount = 1
+dashStrength = 700
+attackRange = 6.0
+attackCooldown = 0.3
